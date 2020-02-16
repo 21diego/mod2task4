@@ -15,18 +15,19 @@ const statesReference = {
 
 let urlsrc, who;
 if(document.querySelector("#senate")){
-  urlsrc = "https://api.propublica.org/congress/v1/113/senate/members.json";
+  urlsrc = ""
   who = "senator";
 }
 else if (document.querySelector("#house")){
-  urlsrc = "https://api.propublica.org/congress/v1/113/house/members.json";
+  urlsrc = ""
   who = "representative";
 }
 
 const app = new Vue({
   el: "#app",
   data: {
-    url: urlsrc,
+    urlsenate: "https://api.propublica.org/congress/v1/113/senate/members.json",
+    urlhouse: "https://api.propublica.org/congress/v1/113/house/members.json",
     init: {
       method: "GET",
       headers: {
@@ -44,10 +45,18 @@ const app = new Vue({
     mostEngaged: [],
     leastLoyal: [], 
     mostLoyal: [],
-    totales: {Republican: {reps: 0, votes: 0},Democrat: {reps: 0, votes: 0},Independant: {reps: 0, votes: 0},Total: {reps: 0}}
+    totales: {Republican: {reps: 0, votes: 0},Democrat: {reps: 0, votes: 0},Independant: {reps: 0, votes: 0},Total: {reps: 0}},
+    current: "home",
   },
   created(){
-    fetch(this.url, this.init)
+    let url;
+    if(document.querySelector("#senate")){
+      url = this.urlsenate;
+    }
+    else if (document.querySelector("#house")){
+      url = this.urlhouse;
+    }
+    fetch(url, this.init)
     .then(function(res){
       if(res.ok){
         return res.json();
@@ -120,11 +129,25 @@ const app = new Vue({
       app.totales.Republican.votes = app.totales.Republican.votes!=0?app.totales.Republican.votes/app.totales.Republican.reps:0;
       app.totales.Democrat.votes = app.totales.Democrat.votes!=0?app.totales.Democrat.votes/app.totales.Democrat.reps:0;
       app.totales.Independant.votes = app.totales.Independant.votes!=0?app.totales.Independant.votes/app.totales.Independant.reps:0;
-    }
+    },
+    
   },
   computed:{
     filterMembers(){
       return this.members.filter(m => app.parties.includes(m.party) && (m.state == app.stateAct || app.stateAct == "All"));
+    },
+    changeUrl(){
+      console.log("entro")
+      let who;
+      if(document.querySelector("#senate")){
+        app.url = "https://api.propublica.org/congress/v1/113/senate/members.json";
+        who = "senator";
+      }
+      else if (document.querySelector("#house")){
+        app.url = "https://api.propublica.org/congress/v1/113/house/members.json";
+        who = "representative";
+      }
+      return true;
     }
   }
 })
