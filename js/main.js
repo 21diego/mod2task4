@@ -22,7 +22,7 @@ statesFull = {
 let table = document.querySelector("#table-data");
 let tbody = document.querySelector("tbody");
 
-let members = data.results[0].members;
+let members = app.members;
 let states = [];
 
 function filtrar(){

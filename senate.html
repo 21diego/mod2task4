@@ -12,7 +12,7 @@
    
 </head>
 
-<body>
+<body id="senate">
    
    <header>            
       <div class="container d-flex justify-content-between align-items-center mt-3 mb-3">
@@ -56,7 +56,7 @@
    </nav>
    
    <!--Table container-->
-   <div class="container mt-3 mb-3">
+   <div class="container mt-3 mb-3" id="app">
       <div class="col-lg-8 col-sm-12">
          <h2>Senators</h2>
          <p>First convened in 1789, the composition and powers of the Senate are established in Article One of the U.S. Constitution. Each state is represented by two senators, regardless of population, who serve staggered six-year terms. The Senate has several exclusive powers not granted to the House, including consenting to treaties as a precondition to their ratification and consenting to or confirming appointments of Cabinet secretaries, federal judges, other federal executive officials, military officers, regulatory officials, ambassadors, and other federal uniformed officers, as well as trial of federal officials impeached by the House.</p>
@@ -64,14 +64,8 @@
       <div class="d-flex justify-content-between flex-wrap">
          <fieldset>
             <label>Filter by party:</label>
-            <label>
-               <input type="checkbox" value="R" class="parties" id="rep" checked>Republican
-            </label>
-            <label>
-               <input type="checkbox" value="D" class="parties" id="dem" checked>Democrat
-            </label>
-            <label>
-               <input type="checkbox" value="I" class="parties" id="ind" checked>Independent
+            <label v-for="party in getKeyValue(members,'party')">
+               <input type="checkbox" :value="party" class="parties" v-model="parties" checked>{{getValue(partiesRef,party)}}
             </label>
          </fieldset>
          <fieldset>
@@ -84,15 +78,18 @@
       <table id="table-data" class="table table-hover table-striped">
          <thead>
             <tr>
-               <th>Senator's Name</th>
-               <th>Party Affilication</th>
-               <th>State</th>
-               <th>Seniority</th>
-               <th>Votes</th>
+               <th v-for="head in heads">{{toPhrase(head)}}</th>
             </tr>
          </thead>
          <tbody>
-            
+            <tr v-for="member in filterMembers">
+               <td v-if="member.url !=''"> <a :href="member.url" target="_blank">{{member.last_name}}, {{member.first_name}} {{member.middle_name?member.middle_name:null}}</a></td>
+               <td v-else>{{member.last_name}}, {{member.first_name}} {{member.middle_name?member.middle_name:null}}</td>
+               <td>{{getValue(partiesRef,member.party)}}</td>
+               <td>{{getValue(statesRef,member.state)}}</td>
+               <td>{{member.seniority}} year/s</td>
+               <td>{{member.votes_with_party_pct}}%</td>
+            </tr>
          </tbody>
       </table>
    </div> 
@@ -101,7 +98,7 @@
          <p>2016 TGIF | All Rights Reserved</p>
       </div>
    </footer>
-   <script src="js/pro-congress-113-senate.js"></script>
-   <script src="js/main.js"></script>    
+   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+   <script src="js/fetch.js"></script>   
 </body>
 </html>
