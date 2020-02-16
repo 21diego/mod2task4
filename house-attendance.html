@@ -10,7 +10,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body id="house">
     <header>            
         <div class="container d-flex justify-content-between align-items-center mt-3 mb-3">
             <h1>TGIF Logo</h1>
@@ -51,7 +51,7 @@
             </li>
         </ul>
     </nav>
-    <div class="container">
+    <div class="container" id="app">
         <div class="d-flex">
             <div class="col-md-6">
                 <h2>Attendance</h2>
@@ -70,7 +70,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                       
+                        <tr v-for="(value,key) in totales">
+                            <td>{{key}}</td>
+                            <td>{{value.reps}}</td>
+                            <td>{{value.votes?(value.votes).toFixed(2)+"%":null}}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -88,7 +92,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        
+                        <tr v-for="member in leastEngaged">
+                            <td>{{member.last_name}}, {{member.first_name}} {{member.middle_name?member.middle_name:null}}</td>
+                            <td>{{member.missed_votes}}</td>
+                            <td>{{member.missed_votes_pct.toFixed(2)}}%</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -103,7 +111,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        
+                        <tr v-for="member in mostEngaged">
+                            <td>{{member.last_name}}, {{member.first_name}} {{member.middle_name?member.middle_name:null}}</td>
+                            <td>{{member.missed_votes}}</td>
+                            <td>{{member.missed_votes_pct.toFixed(2)}}%</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -118,7 +130,7 @@
             <p>2016 TGIF | All Rights Reserved</p>
         </div>
     </footer>
-    <script src="js/pro-congress-113-house.js"></script>
-    <script src="js/statitics.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="js/fetch.js"></script>
 </body>
 </html>

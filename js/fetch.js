@@ -13,7 +13,6 @@ const statesReference = {
   WA: "Estado de Washington",WV: "Virginia Occidental",WI: "Wisconsin",WY: "Wyoming"
 }
 
-
 let urlsrc, who;
 if(document.querySelector("#senate")){
   urlsrc = "https://api.propublica.org/congress/v1/113/senate/members.json";
@@ -41,6 +40,11 @@ const app = new Vue({
     states: [],
     statesRef: statesReference,
     heads: [who+"'s_name", "party_affilication", "state", "seniority", "votes"],
+    leastEngaged: [],
+    mostEngaged: [],
+    leastLoyal: [], 
+    mostLoyal: [],
+    totales: {Republican: {reps: 0, votes: 0},Democrat: {reps: 0, votes: 0},Independant: {reps: 0, votes: 0},Total: {reps: 0}}
   },
   created(){
     fetch(this.url, this.init)
@@ -57,6 +61,11 @@ const app = new Vue({
       app.parties = app.getKeyValue(app.members,"party");
       app.states = app.getKeyValue(app.members,"state");
       app.states.sort();
+      app.leastEngaged = app.getArray(app.members,"missed_votes_pct",false);
+      app.mostEngaged = app.getArray(app.members,"missed_votes_pct",true);
+      app.leastLoyal = app.getArray(app.members,"votes_with_party_pct",true);
+      app.mostLoyal = app.getArray(app.members,"votes_with_party_pct",false);
+      app.calculateTotal();
     })
     .catch(function(error){
       console.log(error);
@@ -79,7 +88,38 @@ const app = new Vue({
       let value = object[key];
       if(value) return object[key];
       else return key;
-      
+    },
+    getArray(array,key,directo){
+      let result = [];
+      let aux = array.filter(m => m.total_votes != 0);
+      aux = directo?[...aux].sort((a,b) => a[key] - b[key]):[...aux].sort((a,b) => b[key] - a[key])
+      let tenPct = parseInt(aux.length*0.1);
+      let i = 0;
+      while(i<tenPct || aux[i][key] == aux[i-1][key]){
+        result.push(aux[i]);
+        i++;
+      }
+      return result;
+    },
+    calculateTotal(){
+      app.members.forEach(m => {
+        if(m.party == "R"){
+          app.totales.Republican.reps++;
+          app.totales.Republican.votes+= m.votes_with_party_pct;
+        }
+        else if(m.party == "D"){
+          app.totales.Democrat.reps++;
+          app.totales.Democrat.votes+= m.votes_with_party_pct;
+        }
+        else {
+          app.totales.Independant.reps++;
+          app.totales.Independant.votes+= m.votes_with_party_pct;
+        }
+        app.totales.Total.reps++;
+      })
+      app.totales.Republican.votes = app.totales.Republican.votes!=0?app.totales.Republican.votes/app.totales.Republican.reps:0;
+      app.totales.Democrat.votes = app.totales.Democrat.votes!=0?app.totales.Democrat.votes/app.totales.Democrat.reps:0;
+      app.totales.Independant.votes = app.totales.Independant.votes!=0?app.totales.Independant.votes/app.totales.Independant.reps:0;
     }
   },
   computed:{
