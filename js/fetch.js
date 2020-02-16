@@ -76,12 +76,15 @@ const app = new Vue({
       return result
     },
     getValue(object,key){
-      return object[key];
+      let value = object[key];
+      if(value) return object[key];
+      else return key;
+      
     }
   },
   computed:{
     filterMembers(){
-      return this.members.filter(m => app.parties.includes(m.party));
+      return this.members.filter(m => app.parties.includes(m.party) && (m.state == app.stateAct || app.stateAct == "All"));
     }
   }
 })

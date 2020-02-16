@@ -70,8 +70,9 @@
          </fieldset>
          <fieldset>
             <label>Filter by State</label>
-            <select name="state" id="states-select">
-               <option value="all">All</option>
+            <select name="state" id="states-select" v-model="stateAct">
+               <option value="All">All States</option>
+               <option v-for="state in states" :value="state">{{getValue(statesRef,state)}}</option>
             </select>
          </fieldset>
       </div>
